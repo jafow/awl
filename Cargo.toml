@@ -1,0 +1,6 @@
+[package]
+name = "awl"
+version = "0.1.0"
+authors = ["jaredfowler <jared.a.fowler@gmail.com>"]
+
+[dependencies]
