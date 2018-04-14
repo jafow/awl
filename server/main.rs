@@ -37,7 +37,11 @@ fn connect(){
         };
 
         match connection_pool.find_client(&target_peer) {
-            Some(c) => println!("Found them! {:?}", c),
+            Some(c) => (
+                println!("Found them! {:?}", c);
+                socket.send(&c.serialize_found_peer())
+                .unwrap().expect("Failed to send target peer to client");
+            ),
             None => (
                 match connection_pool.client_in_pool(&new_client.private.ip()) {
                     Some(_) => println!("Client already pending connection"),

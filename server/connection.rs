@@ -6,6 +6,12 @@ pub struct Client {
     pub public: SocketAddr,
 }
 
+impl Client {
+    pub fn serialize_found_peer(&self) {
+        // returns u8 array of destination peer's public IP 
+    }
+
+}
 pub struct Pool {
     pub connections: Vec<Client>,
 }
