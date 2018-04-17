@@ -9,23 +9,31 @@ use byteorder::{NetworkEndian, ByteOrder};
 pub struct Client {
     pub private: SocketAddr,
     pub public: SocketAddr,
+    pub target: IpAddr,
 }
 
 impl Client {
-    fn make(msg: &[u8; 6], public: SocketAddr) -> Result<Client, Box<StdError>> {
+    pub fn new(msg: &[u8], public: SocketAddr) -> Result<Client, Box<StdError>> {
         let private = Client::parse_private_connection(msg);
+        let target = Client::parse_target_ip(&msg[6..]);
+
         Ok(Client{
             private,
             public,
+            target,
         })
     }
 }
 
 impl Client {
-    pub fn parse_private_connection(msg: &[u8]) -> SocketAddr {
+    fn parse_private_connection(msg: &[u8]) -> SocketAddr {
         let ip = Ipv4Addr::new(msg[0], msg[1], msg[2], msg[3]);
         let port = NetworkEndian::read_u16(&msg[4..6]);
         SocketAddr::new(IpAddr::V4(ip), port)
+    }
+
+    fn parse_target_ip(msg: &[u8]) -> IpAddr {
+        IpAddr::V4(Ipv4Addr::new(msg[0], msg[1], msg[2], msg[3]))
     }
 }
 
@@ -57,8 +65,4 @@ impl Pool {
             _ => return None,
         }
     }
-}
-
-pub fn parse_target_ip(msg: &[u8]) -> IpAddr {
-    IpAddr::V4(Ipv4Addr::new(msg[0], msg[1], msg[2], msg[3]))
 }

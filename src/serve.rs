@@ -5,7 +5,8 @@ use std::net::{UdpSocket};
 use libawl::{Client, Pool};
 
 pub fn serve() -> () {
-    let socket = UdpSocket::bind("127.0.0.1:3000").expect("Could not connect on port 80");
+    let socket = UdpSocket::bind("127.0.0.1:3000")
+        .expect("Could not connect on port 3000");
     let mut connection_pool = Pool::new();
 
     loop {
@@ -15,16 +16,9 @@ pub fn serve() -> () {
             continue;
         }
 
-        let private_addr = Client::parse_private_connection(&buf);
-        let target_peer = &buf[6..];
-        let target_peer = libawl::parse_target_ip(target_peer);
+        let new_client = Client::new(&buf, public_addr).unwrap();
 
-        let new_client = Client {
-            private: private_addr,
-            public: public_addr,
-        };
-
-        match connection_pool.find_client(&target_peer) {
+        match connection_pool.find_client(&new_client.target) {
             Some(c) => println!("Found them! {:?}", c),
             None => (
                 match connection_pool.client_in_pool(&new_client.private.ip()) {
