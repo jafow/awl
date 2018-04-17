@@ -34,6 +34,14 @@ pub struct Pool {
 }
 
 impl Pool {
+    pub fn new() -> Pool {
+        Pool {
+            connections: Vec::new(),
+        }
+    }
+}
+
+impl Pool {
     pub fn client_in_pool(&self, target_ip: &IpAddr) -> Option<usize> {
         for (i, ref client) in self.connections.iter().enumerate() {
             if client.private.ip() == *target_ip {
@@ -51,6 +59,6 @@ impl Pool {
     }
 }
 
-pub fn parse_target_ip(msg: &[u8; 4]) -> IpAddr {
+pub fn parse_target_ip(msg: &[u8]) -> IpAddr {
     IpAddr::V4(Ipv4Addr::new(msg[0], msg[1], msg[2], msg[3]))
 }
