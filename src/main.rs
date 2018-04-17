@@ -13,13 +13,10 @@ mod connect;
 
 
 macro_rules! command_list {
-    () => (
-"
-    serve         Act as a rendevous server for connecting multiple peers
-    connect       Connect to a peer the rendevous implementation
-"
-    )
-}
+    () => ("
+        serve         Act as a rendevous server for connecting multiple peers
+        connect       Connect to a peer the rendevous implementation
+    ")}
 
 static USAGE: &'static str = concat!("
 Usage:
@@ -34,7 +31,6 @@ Commands:", command_list!());
 #[derive(Deserialize)]
 struct Args {
     arg_command: Option<Command>,
-    flag_list: bool,
 }
 
 fn main() {
