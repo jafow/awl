@@ -1,19 +1,12 @@
-extern crate byteorder;
+extern crate libawl;
 
-use std::net::{SocketAddr, UdpSocket, IpAddr, Ipv4Addr};
-use byteorder::{NetworkEndian, ByteOrder};
+use std::net::{UdpSocket, IpAddr, Ipv4Addr};
 
-mod connection;
+use libawl::{Client, Pool};
 
-fn parse_private_connection(msg: &[u8]) -> SocketAddr {
-    let ip = Ipv4Addr::new(msg[0], msg[1], msg[2], msg[3]);
-    let port = NetworkEndian::read_u16(&msg[4..6]);
-    SocketAddr::new(IpAddr::V4(ip), port)
-}
-
-fn connect(){
+pub fn serve() -> () {
     let socket = UdpSocket::bind("127.0.0.1:3000").expect("Could not connect on port 80");
-    let mut connection_pool = connection::Pool {
+    let mut connection_pool = Pool {
         connections: Vec::new(),
     };
 
@@ -24,14 +17,14 @@ fn connect(){
             continue;
         }
 
-        let private_addr = parse_private_connection(&buf);
+        let private_addr = Client::parse_private_connection(&buf);
         let target_peer = &buf[6..];
         let target_peer = IpAddr::V4(Ipv4Addr::new(target_peer[0],
                                         target_peer[1],
                                         target_peer[2],
                                         target_peer[3]));
 
-        let new_client = connection::Client {
+        let new_client = Client {
             private: private_addr,
             public: public_addr,
         };
@@ -46,8 +39,4 @@ fn connect(){
             ),
         }
     }
-}
-
-fn main() {
-    connect();
 }

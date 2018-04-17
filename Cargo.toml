@@ -3,4 +3,16 @@ name = "awl"
 version = "0.1.0"
 authors = ["jaredfowler <jared.a.fowler@gmail.com>"]
 
+[lib]
+name = "libawl"
+path = "lib/connection.rs"
+
+[[bin]]
+name = "awl"
+path = "src/main.rs"
+
 [dependencies]
+byteorder = "1.2.2"
+docopt = "0.8"
+serde = "1.0"
+serde_derive = "1.0"
