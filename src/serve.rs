@@ -19,7 +19,12 @@ pub fn serve() -> () {
         let new_client = Client::new(&buf, public_addr).unwrap();
 
         match connection_pool.find_client(&new_client.target) {
-            Some(c) => println!("Found them! {:?}", c),
+            Some(c) => {
+                socket.connect(&new_client.public).unwrap();
+                socket.send(&c.serialize()).unwrap();
+                socket.connect(&c.public).unwrap();
+                socket.send(&new_client.serialize()).unwrap();
+            },
             None => (
                 match connection_pool.client_in_pool(&new_client.private.ip()) {
                     Some(_) => println!("Client already pending connection"),
